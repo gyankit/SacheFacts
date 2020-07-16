@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block css %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if title %}{{ title }}{% else %}Sache Fact{% endif %}</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='site/logo.jpg') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='plugins/fontawesome/all.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='plugins/adminlte/adminlte.min.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    {% endblock css %}
+</head>
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+    {% if current_user.is_authenticated %}{% include 'includes/_adminHeader.html' %}{% endif %}
+    {% if current_user.is_authenticated %}{% include 'includes/_adminSidebar.html' %}{% endif %}
+        <div class="content-wrapper">
+            {% block top %}{% endblock top %}
+            <div class="content">
+                <div class="container-fluid">
+                {% block body %}{% endblock body %}
+                </div>
+            </div>
+        </div>
+    {% if current_user.is_authenticated %}{% include 'includes/_adminFooter.html' %}{% endif %}
+    </div>
+    {% block js %}
+    <script src="{{ url_for('static', filename='plugins/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='plugins/adminlte/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='plugins/adminlte/adminlte.min.js') }}"></script>
+    {% endblock js %}
+</body>
+</html>

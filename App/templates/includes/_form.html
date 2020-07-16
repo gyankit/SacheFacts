@@ -1,0 +1,121 @@
+<!-- Input Form Normal View -->
+{% macro form_input_field(field) %}
+    <div class="mb-3">
+        {{ field.label(class="form-label") }}
+    {% if field.errors %} 
+        {{ field(class="form-control is-invalid") }}
+        <ul class="invalid-feedback">
+        {% for error in field.errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    {% else %} 
+        {{ field(class="form-control")|safe }}
+    {% endif %} 
+    </div>
+{% endmacro %}
+
+
+<!-- Input Form Inline View -->
+{% macro form_input_field_inline(field) %}
+    <div class="row mb-3">
+        {{ field.label(class="col-lg-3 col-form-label") }}
+        <div class="col-lg-9">
+        {% if field.errors %} 
+            {{ field(class="form-control is-invalid") }}
+            <ul class="invalid-feedback">
+            {% for error in field.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+            </ul>
+        {% else %} 
+            {{ field(class="form-control")|safe }}
+        {% endif %} 
+        </div>
+    </div>
+{% endmacro %}
+
+
+<!-- Input Form No Label View -->
+{% macro form_input_field_label(field) %}
+    <div class="mb-3">
+        {% if field.errors %} 
+            {{ field(class="form-control is-invalid") }}
+            <ul class="invalid-feedback">
+            {% for error in field.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+            </ul>
+        {% else %} 
+            {{ field(class="form-control")|safe }}
+        {% endif %}
+    </div>
+{% endmacro %}
+
+
+<!-- Checkbox / Radio View  -->
+{% macro form_check_field(field) %}
+    <div class="form-check mb-3 icheck-primary">
+        {{ field(class="form-check-input")|safe }}
+        {{ field.label(class="form-check-label") }}
+    </div>
+{% endmacro %}
+
+
+<!-- Select Form View  -->
+{% macro form_select_field(field) %}
+    <div class="mb-3">
+        {{ field.label(class="form-label") }}
+    {% if field.errors %} 
+        {{ field(class="form-select is-invalid select2", style="width:100%;") }}
+        <ul class="invalid-feedback">
+        {% for error in field.errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    {% else %} 
+        {{ field(class="form-select select2", style="width:100%;")|safe }}
+    {% endif %} 
+    </div>
+{% endmacro %}
+
+<!-- Select Form Inline View -->
+{% macro form_select_field_inline(field) %}
+    <div class="row mb-3">
+        {{ field.label(class="col-lg-3 col-form-label") }}
+        <div class="col-lg-9">
+        {% if field.errors %} 
+            {{ field(class="form-select is-invalid select2", style="width:100%;") }}
+            <ul class="invalid-feedback">
+            {% for error in field.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+            </ul>
+        {% else %} 
+            {{ field(class="form-select select2", style="width:100%;")|safe }}
+        {% endif %} 
+        </div>
+    </div>
+{% endmacro %}
+
+<!-- File Form Inline View -->
+{% macro form_file_field_inline(field) %}
+    <div class="form-group row mb-3">
+        {{ field.label(class="col-lg-3 col-form-label") }}
+        <div class="col-lg-9">
+            <div class="input-group">
+                <div class="custom-file">
+                    {{ field(class="custom-file-input")|safe }}
+                    <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                </div>
+            </div>
+            {% if field.errors %}
+            <ul class="text-danger text-sm">
+                {% for error in field.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}

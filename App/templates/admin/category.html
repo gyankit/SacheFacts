@@ -1,0 +1,105 @@
+{% extends 'layouts/admin.html' %}
+{% from 'includes/_form.html' import form_input_field %}
+{% block css %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='plugins/datatables-bs4/dataTables.bootstrap4.min.css') }}">
+{% endblock css %}
+{% block top %}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark">Categories</h1>
+            </div>
+        <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="{{ url_for('admins.home') }}">Home</a></li>
+                <li class="breadcrumb-item active">Category</li>
+            </ol>
+        </div>
+        </div>
+    </div>
+    <hr>
+</div>
+{% endblock top %}
+{% block body %}
+<div class="row">
+    <div class="card col-lg-4 col-md-6 col-12 mr-lg-4">
+        <div class="card-header">
+            <h3 class="text-center text-uppercase">Add Category</h3>
+        </div>
+        <div class="card-body">
+            {% include 'includes/_flash.html' %}
+            <form action="{{ url_for('admins.category') }}" method="POST" novalidate>
+                {{ form.hidden_tag() }}
+                {{ form_input_field(form.name) }}
+                <div class="d-flex justify-content-center">
+                    {{ form.submit(class="btn px-3 rounded-0 btn-primary text-light mb-3") }}
+                </div>
+            </form>
+        </div>
+    </div>
+    {% if categories %}
+    <div class="card col-lg-7 col-md-6 col-12 ml-lg-4">
+        <div class="card-body table-responsive">
+            <table id="dataTable" class="table table-bordered table-striped table-hover table-sm text-center">
+                <thead class="bg-dark">
+                    <tr class="text-warning">
+                        <th>Sr No</th>
+                        <th>Category Name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for category in categories %}
+                    <tr>
+                        <td>{{ category.id }}</td>
+                        <td>{{ category.name }}</td>
+                        <td><button type="button" class="btn" data-toggle="modal" data-target="#modal-danger" onclick="trashcategory(`{{ category.id }}`)"><i class="fas fa-trash-alt text-danger"></i></button></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+<div class="modal fade" id="modal-danger">
+    <div class="modal-dialog">
+        <div class="modal-content bg-danger">
+            <div class="modal-header">
+                <h4 class="modal-title">Confirm Delete Category</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you Sure,<br>You want to delete Category id : <strong id="categoryname"></strong></p>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-outline-light" data-dismiss="modal">Close</button>
+                <form action="{{ url_for('admins.deletecategory') }}" method="POST">
+                    {{ formDelete.hidden_tag() }}
+                    <div class="d-flex justify-content-center">
+                        {{ formDelete.delete(class="btn px-3 btn-outline-light") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}
+{% block js %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='plugins/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='plugins/datatables-bs4/dataTables.bootstrap4.min.js') }}"></script>
+    <script>
+        $('#dataTable').DataTable();
+
+        function trashcategory(id) {
+            document.getElementById('deleteid').value = id;
+            document.getElementById('categoryname').innerHTML = id;
+            //console.log(id);
+        }
+    </script>
+{% endblock js %}

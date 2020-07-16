@@ -1,0 +1,108 @@
+{% extends 'layouts/admin.html' %}
+{% block css %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='plugins/datatables-bs4/dataTables.bootstrap4.min.css') }}">
+{% endblock css %}
+{% block top %}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark">Blog - All</h1>
+            </div>
+        <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="{{ url_for('admins.home') }}">Home</a></li>
+                <li class="breadcrumb-item active">Blog</li>
+            </ol>
+        </div>
+        </div>
+    </div>
+</div>
+{% endblock top %}
+{% block body %}
+<div class="card">
+    <div class="card-body table-responsive">
+        <table id="dataTable" class="table table-bordered table-striped table-hover text-center">
+            <thead class="bg-dark">
+                <tr class="text-warning">
+                    <th>Sr No</th>
+                    <th>Title</th>
+                    <th>Created At</th>
+                    <th>Status</th>
+                    <th>Featured</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+        <tbody>
+            {% for post in posts %}
+                <tr>
+                    <td>{{ post.id }}</td>
+                    <td>{{ post.title }}</td>
+                    <td>{{ post.created_at }}</td>
+                    <td>
+                        {% if post.status %}
+                        <button type="button" class="btn btn-success btn-sm" onclick="location.href = `{{ url_for('admins.featuredstatus', id=post.id, type='status') }}`">YES</button>
+                        {% else %}
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="location.href = `{{ url_for('admins.featuredstatus', id=post.id, type='status') }}`">NO</button>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if post.featured %}
+                        <button type="button" class="btn btn-primary btn-sm" onclick="location.href = `{{ url_for('admins.featuredstatus', id=post.id, type='featured') }}`">YES</button>
+                        {% else %}
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="location.href = `{{ url_for('admins.featuredstatus', id=post.id, type='featured') }}`">NO</button>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary" onclick="location.href = `{{ url_for('admins.viewsinglepost', slag=post.slag) }}`"><i class="fas fa-eye text-white"></i></button>
+                            <button type="button" class="btn btn-warning" onclick="location.href = `{{ url_for('admins.editpost', slag=post.slag) }}`"><i class="fas fa-edit text-white"></i></button>
+                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal-danger" onclick="trashpost(`{{ post.id }}`, `{{ post.title }}`)"><i class="fas fa-trash-alt text-white"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="modal fade" id="modal-danger">
+    <div class="modal-dialog">
+        <div class="modal-content bg-danger">
+            <div class="modal-header">
+                <h4 class="modal-title">Confirm Delete Blog</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you Sure,<br>You want to delete Blog Title : <strong id="posttitle"></strong></p>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-outline-light" data-dismiss="modal">Close</button>
+                <form action="{{ url_for('admins.deletepost') }}" method="POST">
+                    {{ formDelete.hidden_tag() }}
+                    <div class="d-flex justify-content-center">
+                        {{ formDelete.delete(class="btn px-3 btn-outline-light") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}
+{% block js %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='plugins/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='plugins/datatables-bs4/dataTables.bootstrap4.min.js') }}"></script>
+    <script>
+        $('#dataTable').DataTable({
+            "order": [0, "desc"]
+        });
+        function trashpost(id, title) {
+            document.getElementById('deleteid').value = id;
+            document.getElementById('posttitle').innerHTML = title;
+        }
+    </script>
+{% endblock js %}

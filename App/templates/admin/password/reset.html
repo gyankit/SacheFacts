@@ -1,0 +1,41 @@
+{% from 'includes/_form.html' import form_input_field_label %}
+{% from 'includes/_form.html' import form_check_field %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% if title %}{{ title }}{% else %}Sache Fact{% endif %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='plugins/adminlte/adminlte.min.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='site/logo.jpg') }}" type="image/x-icon">
+</head>
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <div class="login-logo">
+            <img src="{{ url_for('static', filename='site/logo.jpg') }}" alt="No Logo" width="100px"><br>
+            <b>Sache</b>Fact
+        </div>
+        <div class="card">
+            <div class="card-body login-card-body">
+                <p class="login-box-msg text-center">You are only one step a way from your new password, recover your password now.</p>
+                <form class="form mb-3" accept="" method="POST" novalidate>
+                    {% include 'includes/_flash.html' %}
+                    {{ form.hidden_tag() }}
+                    {{ form_input_field_label(form.password) }}
+                    {{ form_input_field_label(form.confirmpassword) }}
+                    <div class="row">
+                        <div class="col-12">
+                            {{ form.submit(class="btn btn-block btn-primary mb-3") }}
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='plugins/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='plugins/adminlte/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='plugins/adminlte/adminlte.min.js') }}"></script>
+</body>
+</html>

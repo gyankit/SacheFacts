@@ -1,0 +1,68 @@
+{% extends 'layouts/admin.html' %}
+{% block top %}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark">Blog - View</h1>
+            </div>
+        <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="{{ url_for('admins.home') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('admins.viewpost') }}">Blog</a></li>
+                <li class="breadcrumb-item active">{{ post.slag }}</li>
+            </ol>
+        </div>
+        </div>
+    </div>
+</div>
+{% endblock top %}
+{% block body %}
+<div class="card rounded-0 px-3">
+    <div class="card-header">
+        <div class="row my-3">
+            <h2 class="font-weight-bold mr-auto ml-5">{{ post.title }}{% if post.featured %}<span class="ml-5 badge badge-info text-sm">Featured</span>{% endif %}</h2>
+            <button type="button" class="btn btn-warning ml-auto mr-5" onclick="location.href = `{{ url_for('admins.editpost', slag=post.slag) }}`"><i class="fas fa-edit text-white"></i></button>
+        </div>
+        <hr>
+        <div class="row my-2">
+            <span class="text-muted mr-auto">Posted at : {{ post.created_at }}</span>
+            <span class="text-muted ml-auto">Updated at : {{ post.updated_at }}</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-9 col-md-8 col-12">
+                <p class="font-weight-bold text-left">
+                    Categories : &ensp;&ensp;&ensp;
+                    {% for category in categories %}
+                        <span class="mx-1 badge badge-primary">{{ category }}</span>
+                    {% endfor %}
+                </p>
+                <hr>
+                <div class="border rounded p-3">{{ post.content|safe }}</div>
+                <hr>
+                <p class="font-weight-bold text-left">
+                    Tags : &ensp;&ensp;&ensp;
+                    {% for tag in tags %}
+                        <span class="mx-1 badge badge-primary">{{ tag }}</span>
+                    {% endfor %}
+                </p>
+            </div>
+            <div class="col-lg-3 col-md-4 col-12">
+                <div class="img text-center">
+                    <img src="{{ url_for('static', filename='post/'+post.thumbnail) }}" class="img-thumbnail" alt="Post Thumbnail">
+                </div>
+                <hr>
+                <p class="font-weight-bold">Youtube : <span class="font-weight-normal text-sm">{{ post.youtube }}</span></p>
+                <p class="font-weight-bold">Facebook : <span class="font-weight-normal text-sm">{{ post.facebook }}</span></p>
+                <p class="font-weight-bold">Instagram : <span class="font-weight-normal text-sm">{{ post.instagram }}</span></p>
+                <p class="font-weight-bold">Link1 : <span class="font-weight-normal text-sm">{{ post.link1 }}</span></p>
+                <p class="font-weight-bold">Link2 : <span class="font-weight-normal text-sm">{{ post.link2 }}</span></p>
+                <hr>
+                <p>Status : {% if post.status %}<span class="badge badge-primary">Active</span>{% else %}<span class="badge badge-secondary">Deactive</span>{% endif %}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}
