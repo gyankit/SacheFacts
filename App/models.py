@@ -96,11 +96,14 @@ class PostImage(db.Model):
 
 
 class AccountSetting(db.Model):
-    __tablename__ = 'account'
+    __tablename__ = 'account_settings'
     id = db.Column(db.Integer, primary_key=True)
     site_title = db.Column(db.String(500), nullable=False, unique=True)
     site_logo = db.Column(db.String(500), nullable=False, unique=True)
     site_poster = db.Column(db.String(500), nullable=False, unique=True)
+    site_youtube = db.Column(db.String(500), nullable=False, unique=True)
+    site_facebook = db.Column(db.String(500), nullable=False, unique=True)
+    site_instagram = db.Column(db.String(500), nullable=False, unique=True)
     admin_firstname = db.Column(db.String(50), nullable=False, unique=True)
     admin_lastname = db.Column(db.String(50), nullable=False, unique=True)
     admin_displayname = db.Column(db.String(100), nullable=False, unique=True)
@@ -111,3 +114,12 @@ class AccountSetting(db.Model):
 
     def __repr__(self):
         return f'id : { self.id }'
+
+
+class Subscriber(db.Model):
+    __tablename__ = 'subscriber'
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(50), nullable=False, unique=True)
+
+    def __repr__(self):
+        return f'id : { self.id }, email : { self.email }'

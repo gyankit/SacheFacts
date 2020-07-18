@@ -7,17 +7,28 @@
     <nav class="container py-2" style="background-color: #F1920F;">
         <ul class="nav d-flex justify-content-around">
             <li class="nav-item">
-                <a class="nav-link text-light" href="#">Home</a>
+                <a class="nav-link text-light" href="{{ url_for('users.home') }}">Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-light" href="#">About</a>
+                <a class="nav-link text-light" href="{{ url_for('users.about') }}">About</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-light" href="#">Blog</a>
+                <a class="nav-link text-light" href="{{ url_for('users.blogs') }}">Blog</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-light" href="#">Contact</a>
+                <a class="nav-link text-light" href="{{ url_for('users.contact') }}">Contact</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light" href="{{ url_for('users.home') }}" onclick="event.preventDefault();displaytoggle();"><i class="fas fa-search"></i></a>
             </li>
         </ul>
+    </nav>
+    <nav class="container py-3" id="searchform" style="background-color: #F1920F; display: none;">
+        <form class="row mr-2" action="{{ url_for('users.search') }}" method="GET">
+            <div class="col-10">
+                <input type="text" name="q" id="search" class="form-control rounded-0 p-3" placeholder="Search" required>
+            </div>
+            <button type="submit" class="searchbtn btn rounded-0 btn-info col-2">Search</button>
+        </form>
     </nav>
 </header>

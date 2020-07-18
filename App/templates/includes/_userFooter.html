@@ -1,12 +1,31 @@
-<footer class="text-center pt-3 pb-1" style="background-color: #5B3216;">
-    <p class="h4" style="color: #F1920F;"><del><i>If the facts don't fit the theory change the facts</i></del></p>
-    <div class="icon my-3">
-        <a href="#" class="mx-2" title="Youtube"><i class="fab fa-youtube fa-2x text-danger"></i></a>
-        <a href="#" class="mx-2" title="Facebook"><i class="fab fa-facebook fa-2x text-primary"></i></a>
-        <a href="#" class="mx-2" title="Instagram"><i class="fab fa-instagram fa-2x text-warning"></i></a>
+<footer>
+    <div class="container py-3" style="background-color: #F1920F;">
+        <form class="row row-cols-md-auto g-3 align-items-center justify-content-center" action="{{ url_for('users.subscribe') }}" method="POST">
+            <div class="col-12">
+                <input type="email" name="email" class="form-control p-2 border-0" placeholder="Email id" style="border-radius: 25px; width: 300px;" required>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-success px-3 py-2 border-0" style="border-radius: 25px;">Subscribe</button>
+            </div>
+        </form>
+        {% with messages = get_flashed_messages(category_filter=["subscribe"]) %}
+            {% if messages %}
+                {% for message in messages %}
+                <p class="text-center mb-0 mt-1">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
     </div>
-    <p class="text-light"><strong>Copyright &copy; 2020-<script>var d = new Date(); document.write(d.getFullYear());</script> | All rights reserved.</p>
-    <a href="https://www.facebook.com/gyankit">
-        <img src="{{ url_for('static', filename='site/ms.png') }}" alt="Marker" class="text-right rounded-circle" width="32px" style="opacity: .8">
-    </a>
+    <div class="text-center pt-3 pb-1" style="background-color: #5B3216;">
+        <p class="h4" style="color: #F1920F;"><del><i>If the facts don't fit the theory change the facts</i></del></p>
+        <div class="icon my-3">
+            <a href="{{ site.site_youtube }}" target="_blank" class="mx-2" title="Youtube"><i class="fab fa-youtube fa-2x text-danger"></i></a>
+            <a href="{{ site.site_facebook }}" target="_blank" class="mx-2" title="Facebook"><i class="fab fa-facebook fa-2x text-primary"></i></a>
+            <a href="{{ site.site_instagram }}" target="_blank" class="mx-2" title="Instagram"><i class="fab fa-instagram fa-2x text-warning"></i></a>
+        </div>
+        <p class="text-light"><strong>Copyright &copy; 2020-<script>var d = new Date(); document.write(d.getFullYear());</script> | All rights reserved.</p>
+        <a href="https://www.facebook.com/gyankit" target="_blank">
+            <img src="{{ url_for('static', filename='site/ms.png') }}" alt="Marker" class="text-right rounded-circle" width="32px" style="opacity: .8">
+        </a>
+    </div>
 </footer>

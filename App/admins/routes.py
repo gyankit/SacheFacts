@@ -402,6 +402,9 @@ def account():
     if request.method == 'POST' and form.validate_on_submit():
         try:
             account.site_title = request.form.get('site_title')
+            account.site_youtube = request.form.get('site_youtube')
+            account.site_facebook = request.form.get('site_facebook')
+            account.site_instagram = request.form.get('site_instagram')
             account.admin_firstname = request.form.get('admin_firstname')
             account.admin_lastname = request.form.get('admin_lastname')
             account.admin_displayname = request.form.get('admin_displayname')

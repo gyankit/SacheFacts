@@ -26,12 +26,9 @@
 {% endblock css %}
 {% block body %}
 <div class="row">
-    <div class="col-md-9 col-12 pl-3">
-        <div class="my-2" id="searchdisplay">
-            <div class="alert bg-dark rounder-0 text-center h2 text-warning font-monospace">
-                Latest Blogs
-            </div>
-            {% for blog in latest %}
+    <div class="col-md-9 col-12">
+        <div class="my-4" id="searchdisplay">
+            {% for blog in blogs.items %}
             <div class="row">
                 <div class="col-md-3 col-12 blogthumbnail" title="{{ blog.title }}" style="background-image: url({{ url_for('static', filename='post/'+blog.thumbnail) }});">
                     <p class="pt-2 pl-2">
@@ -70,6 +67,23 @@
             </div>
             <hr class="my-4">
             {% endfor %}
+        </div>
+        <div class="d-flex justify-content-center">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    {% if blogs.has_prev %}
+                      <li class="page-item"> <a class="page-link" href="{{ url_for('users.blogs', page=blogs.prev_num) }}">Previous</a></li>
+                    {% else %}
+                      <li class="page-item"><a class="page-link btn disabled" href="#">Previous</a></li>
+                    {% endif %}
+                    {% if blogs.has_next %}
+                      <li class="page-item"> <a class="page-link px-4" href="{{ url_for('users.blogs', page=blogs.next_num) }}">Next</a></li>
+                    {% else %}
+                      <li class="page-item"><a class="page-link btn disabled px-4" href="#">Next</a></li>
+                    {% endif %}
+
+                </ul>
+            </nav>
         </div>
     </div>
     <div class="col-md-3 border-left px-3">

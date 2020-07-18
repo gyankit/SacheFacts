@@ -1,0 +1,26 @@
+{% extends 'layouts/user.html' %}
+{% block body %}
+<div class="container"  id="searchdisplay">
+    <div class="alert bg-dark rounded-0 font-monospace">
+        <h2 class="font-weight-bold text-center text-white">About Us</h2>
+    </div>
+    <div class="m-5 text-center">
+        Sache Facts Started in the spring of 2020. We have a vision to spread the knowledge about facts. Our goals is to provide you with the best realistic information around the world.
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-12 text-center">
+            <img src="{{ url_for('static', filename=site.admin_photo) }}" alt="No Photo" title="Admin Photo" width="300px" height="300px">
+        </div>
+        <div class="col-md-6 col-12 text-center my-5">
+            <p>Name : <span>{{ site.admin_displayname }}</span></p>
+            <p>Contact : <span>{{ site.admin_contact }}</span></p>
+            <p>Email : <span>{{ site.admin_email }}</span></p>
+            <div class="icon mt-5 text-center">
+                <a href="{{ site.site_youtube }}" target="_blank" class="mx-2" title="Youtube"><i class="fab fa-youtube fa-2x text-danger"></i></a>
+                <a href="{{ site.site_facebook }}" target="_blank" class="mx-2" title="Facebook"><i class="fab fa-facebook fa-2x text-primary"></i></a>
+                <a href="{{ site.site_instagram }}" target="_blank" class="mx-2" title="Instagram"><i class="fab fa-instagram fa-2x text-warning"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}

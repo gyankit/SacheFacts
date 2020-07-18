@@ -1,0 +1,104 @@
+{% extends 'layouts/user.html' %}
+{% block body %}
+<div class="container alert-secondary px-0"  id="searchdisplay">
+    <div class="alert bg-dark font-monospace text-center mb-5 mx-0 rounded-0">
+        <h2 class="text-white font-weight-bold">Contact Details</h2>
+    </div>
+    <div class="row mx-3">
+        <div class="col-md-4 col-12">
+            <div class="text-center">
+                <p class="mb-0 text-decoration-underline font-weight-bold">Admin Name</p>
+                <span>{{ site.admin_displayname }}</span>
+                <hr class="mb-4 text-info">
+            </div>
+            <div class="text-center">
+                <p class="mb-0 text-decoration-underline font-weight-bold">Contact No.</p>
+                <a href="tel:{{ site.admin_contact }}" target="_blank" class="text-decoration-none text-dark">{{ site.admin_contact }}</a>
+                <hr class="mb-4 text-info">
+            </div>
+            <div class="text-center">
+                <p class="mb-0 text-decoration-underline font-weight-bold">Email Id</p>
+                <a href="mailto:{{ site.admin_email }}" target="_blank" class="text-decoration-none text-dark">{{ site.admin_email }}</a>
+                <hr class="mb-4 text-info">
+            </div>
+            <div class="text-center">
+                <p class="mb-0 text-decoration-underline font-weight-bold">Youtube</p>
+                <a href="{{ site.site_youtube }}" target="_blank" class="text-decoration-none text-dark">{{ site.site_youtube }}</a>
+                <hr class="mb-4 text-info">
+            </div>
+            <div class="text-center">
+                <p class="mb-0 text-decoration-underline font-weight-bold">Facebook</p>
+                <a href="{{ site.site_facebook }}" target="_blank" class="text-decoration-none text-dark">{{ site.site_facebook }}</a>
+                <hr class="mb-4 text-info">
+            </div>
+            <div class="text-center">
+                <p class="mb-0 text-decoration-underline font-weight-bold">Instagram</p>
+                <a href="{{ site.site_instagram }}" target="_blank" class="text-decoration-none text-dark">{{ site.site_instagram }}</a>
+                <hr class="mb-4 text-info">
+            </div>
+        </div>
+        <div class="col-md-8 col-12 px-3">
+            <div class="card rounded-0 m-3">
+                <div class="card-body alert-info">
+                    <form action="{{ url_for('users.contact') }}" method="POST" novalidate>
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ form.fullname.label(class="form-label font-weight-bold") }}
+                            {% if form.fullname.errors %} 
+                            {{ form.fullname(class="form-control form-control-lg rounded-0 is-invalid") }}
+                            <ul class="invalid-feedback">
+                            {% for error in form.fullname.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                            </ul>
+                            {% else %} 
+                            {{ form.fullname(class="form-control form-control-lg rounded-0")|safe }}
+                            {% endif %} 
+                        </div>
+                        <div class="mb-3">
+                            {{ form.email.label(class="form-label font-weight-bold") }}
+                            {% if form.email.errors %} 
+                            {{ form.email(class="form-control form-control-lg rounded-0 is-invalid") }}
+                            <ul class="invalid-feedback">
+                            {% for error in form.email.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                            </ul>
+                            {% else %} 
+                            {{ form.email(class="form-control form-control-lg rounded-0")|safe }}
+                            {% endif %} 
+                        </div>
+                        <div class="mb-3">
+                            {{ form.message.label(class="form-label font-weight-bold") }}
+                            {% if form.message.errors %} 
+                            {{ form.message(class="form-control form-control-lg rounded-0 is-invalid", rows=4) }}
+                            <ul class="invalid-feedback">
+                            {% for error in form.message.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                            </ul>
+                            {% else %} 
+                            {{ form.message(class="form-control form-control-lg rounded-0", rows=4)|safe }}
+                            {% endif %} 
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 col-12 mb-3">
+                                {{ form.send(class="btn btn-info btn-lg rounded-0 px-5") }}
+                            </div>
+                            <div class="col-md-8 col-12 mb-3">
+                                {% with messages = get_flashed_messages(category_filter=["contact"]) %}
+                                    {% if messages %}
+                                        {% for message in messages %}
+                                        <p class="text-center my-2 text-danger"><strong>{{ message }}</strong></p>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}

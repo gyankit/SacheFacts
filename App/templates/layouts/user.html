@@ -3,18 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if title %} {{ title }} {% else %} Sache Fact {% endif %}</title>
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <title>{% if title %} {{ title }} {% else %} {{ site.site_title }} {% endif %}</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename=site.site_logo) }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ url_for('static', filename='plugins/bootstrap/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='plugins/fontawesome/all.min.css') }}">
+    {% block css %}{% endblock css %}
 </head>
 <body>
     {% include 'includes/_userHeader.html' %}
-    <div class="container-fluid py-3">
-        {% include 'includes/_flash.html' %}
-        {% block mainContent %}{% endblock mainContent %}
+    <div class="container-fluid p-3">
+        {% block body %}{% endblock body %}
     </div>
     {% include 'includes/_userFooter.html' %}
     <script src="{{ url_for('static', filename='plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='plugins/js/user.js') }}"></script>
+    <script>
+        function displaytoggle(){
+            var x = document.getElementById('searchform')
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+    </script>
+    {% block js %}{% endblock js %}
 </body>
 </html>

@@ -35,6 +35,23 @@
             </div>
         </div>
     {% endfor %}
+    <div class="d-flex justify-content-center">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                {% if blogs.has_prev %}
+                  <li class="page-item"> <a class="page-link" href="{{ url_for('users.blogs', page=blogs.prev_num) }}">Previous</a></li>
+                {% else %}
+                  <li class="page-item"><a class="page-link btn disabled" href="#">Previous</a></li>
+                {% endif %}
+                {% if blogs.has_next %}
+                  <li class="page-item"> <a class="page-link px-4" href="{{ url_for('users.blogs', page=blogs.next_num) }}">Next</a></li>
+                {% else %}
+                  <li class="page-item"><a class="page-link btn disabled px-4" href="#">Next</a></li>
+                {% endif %}
+
+            </ul>
+        </nav>
+    </div>
 </div>
 <div class="modal fade" id="modal-danger">
     <div class="modal-dialog">

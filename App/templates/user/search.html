@@ -1,0 +1,56 @@
+{% extends 'layouts/user.html' %}
+{% block css %}
+{{ super() }}
+<style>
+    .blogcontent {
+        position: relative;
+        -webkit-box-orient: vertical;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: normal;
+    }
+
+    .blogcontent p {
+        margin-bottom: 0px;
+    }
+</style>
+{% endblock css %}
+{% block body %}
+<div class="row">
+    <div class="col-md-9 col-12" id="searchdisplay">
+    {% if blogs %}    
+    {% for blog in blogs %}
+        <div class="card my-2">
+            <div class="card-header">
+                <a href="{{ url_for('users.singleblog', slag=blog.slag) }}" class="text-decoration-none">
+                    <div class="row">
+                        <div class="col-3">
+                            <img class="img-thumbnail" src="{{ url_for('static', filename='post/'+blog.thumbnail) }}" alt="No Thumbnail">
+                        </div>
+                        <div class="col-9">
+                            <div class="title">
+                                <p class="h3">{{ blog.title }}</p>
+                                <hr>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <p class="text-muted">Posted at : {{ blog.created_at }}</p>
+                                <p class="text-muted">Posted by : Admin</p>
+                            </div>
+                            <span class="blogcontent text-dark">
+                                {{ blog.content|safe }}
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+    {% endif %}
+    </div>
+    <div class="col-md-3 border-left px-3">
+        {% include 'includes/_userSidebar.html' %}
+    </div>
+</div>
+{% endblock body %}
