@@ -23,12 +23,9 @@ mail_settings = {
     'MAIL_SERVER': os.environ['MAIL_SERVER'],
     'MAIL_PORT': os.environ['MAIL_PORT'],
     'MAIL_USE_TLS': os.environ['MAIL_USE_TLS'],
-    'MAIL_USE_SSL': os.environ['MAIL_USE_SSL'],
     'MAIL_USERNAME': os.environ['MAIL_USERNAME'],
     'MAIL_PASSWORD': os.environ['MAIL_PASSWORD'],
-    'MAIL_DEFAULT_SENDER': os.environ['MAIL_DEFAULT_SENDER'],
-    'MAIL_MAX_EMAILS': os.environ['MAIL_MAX_EMAILS'],
-    'MAIL_ASCII_ATTACHMENTS': os.environ['MAIL_ASCII_ATTACHMENTS']
+    'MAIL_DEFAULT_SENDER': os.environ['MAIL_DEFAULT_SENDER']
 }
 
 app.config.update(db_settings)

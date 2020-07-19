@@ -21,6 +21,7 @@
 </div>
 {% endblock top %}
 {% block body %}
+{% include 'includes/_flash.html' %}
 <div class="card">
     <div class="card-body table-responsive">
         <table id="dataTable" class="table table-bordered table-striped table-hover text-center">
@@ -56,15 +57,47 @@
                     </td>
                     <td>
                         <div class="btn-group">
-                            <button type="button" class="btn btn-primary" onclick="location.href = `{{ url_for('admins.viewsinglepost', slag=post.slag) }}`"><i class="fas fa-eye text-white"></i></button>
-                            <button type="button" class="btn btn-warning" onclick="location.href = `{{ url_for('admins.editpost', slag=post.slag) }}`"><i class="fas fa-edit text-white"></i></button>
-                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal-danger" onclick="trashpost(`{{ post.id }}`, `{{ post.title }}`)"><i class="fas fa-trash-alt text-white"></i></button>
+                            <button type="button" class="btn btn-primary" onclick="location.href = `{{ url_for('admins.viewsinglepost', slag=post.slag) }}`" title="View"><i class="fas fa-eye text-white"></i></button>
+                            <button type="button" class="btn btn-warning" onclick="location.href = `{{ url_for('admins.editpost', slag=post.slag) }}`" title="Edit"><i class="fas fa-edit text-white"></i></button>
+                            {% if post.mail %}
+                            <button type="button" class="btn btn-secondary" disabled><i class="fas fa-mail-bulk text-white" title="Mail"></i></button>  
+                            {% else %} 
+                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-info" onclick="sendmail(`{{ post.id }}`)" title="Mail"><i class="fas fa-mail-bulk text-white"></i></button>
+                            {% endif %}
+                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal-danger" onclick="trashpost(`{{ post.id }}`, `{{ post.title }}`)" title="Delete"><i class="fas fa-trash-alt text-white"></i></button>
                         </div>
                     </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
+    </div>
+</div>
+<div class="modal fade" id="modal-info">
+    <div class="modal-dialog">
+        <div class="modal-content bg-info">
+            <div class="modal-header">
+                <h4 class="modal-title">Send Mail</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ url_for('admins.sendmail') }}" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" name="sendid" id="sendid">
+                    <div class="mb-3">
+                        <label class="text-dark">Mail Body</label>
+                        <textarea name="sendbody" id="sendbody" class="form-control py-3" rows="5" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-outline-light" data-dismiss="modal">Close</button>
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-outline-light px-3">Send</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 <div class="modal fade" id="modal-danger">
@@ -100,6 +133,9 @@
         $('#dataTable').DataTable({
             "order": [0, "desc"]
         });
+        function sendmail(id) {
+            document.getElementById('sendid').value = id;
+        }
         function trashpost(id, title) {
             document.getElementById('deleteid').value = id;
             document.getElementById('posttitle').innerHTML = title;

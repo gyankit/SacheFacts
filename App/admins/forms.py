@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import StringField, BooleanField, PasswordField, SubmitField, TextAreaField, SelectMultipleField, MultipleFileField, HiddenField
 from wtforms.validators import DataRequired, Optional, URL, ValidationError, Email, EqualTo, Length
-from App.models import Tag, Category
+from App.models import Tag, Category, Admin
 
 
 class LoginForm(FlaskForm):
@@ -79,7 +79,7 @@ class ProfileLoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[Optional(), Length(min=8, max=20)], render_kw={'placeholder':'Password'})
-    confirmpassword = PasswordField('Confirm Password', validators=[Optional(), EqualTo('password', 'Both Passwords not Matched.'), Length(min=8, max=20)], render_kw={'placeholder':'Confirm Password'})
+    confirmpassword = PasswordField('Confirm Password', validators=[Optional(), EqualTo('password', 'Both Passwords not Matched.')], render_kw={'placeholder':'Confirm Password'})
     key = HiddenField('key', validators=[DataRequired()])
     submit = SubmitField('Update')
 
@@ -87,6 +87,11 @@ class ProfileLoginForm(FlaskForm):
 class PasswordForgetForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()], render_kw={'placeholder':'Email'})
     submit = SubmitField('Request New Password')
+
+    def validate_email(self, email):
+        admin = Admin.query.filter_by(email=email.data, role='admin').first()
+        if admin is None:
+            raise ValidationError('There is no acocunt with that email. you must register first.')
 
 
 class PasswordResetForm(FlaskForm):

@@ -1,4 +1,8 @@
 {% extends 'layouts/user.html' %}
+{% block facebook %}
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v7.0" nonce="uJgzaG1L"></script>
+{% endblock facebook %}
 {% block body %}
 <div class="card rounded-0 px-3 border-0" id="searchdisplay">
     <div class="card-header">
@@ -49,6 +53,9 @@
                 <p class="font-weight-bold">Link2 : <a class="font-weight-normal text-sm" href="{{ blog.link2 }}" target="_black">{{ blog.link2 }}</a></p>
             </div>
         </div>
+    </div>
+    <div class="card-footer d-flex justify-content-center">
+        <div class="fb-comments" data-href="{{ url_for('users.singleblog', slag=blog.slag, _external=True) }}" data-numposts="5" data-width=""></div>
     </div>
 </div>
 {% endblock body %}

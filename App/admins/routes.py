@@ -1,13 +1,34 @@
-from App import bcrypt, db, app
+from App import bcrypt, db, app, mail
 from App.admins import admin
 from flask import render_template, redirect, request, url_for, flash, abort
+from flask_mail import Message
 from flask_login import login_required, login_user, logout_user, current_user
 from App.admins.forms import LoginForm, TagForm, DeleteForm, CategoryForm, PostCreateForm, AccountForm, PasswordForgetForm, ProfileLoginForm, PasswordResetForm
-from App.models import Admin, Post, Tag, Category, PostTag, PostCategory, PostImage, AccountSetting
+from App.models import Admin, Post, Tag, Category, PostTag, PostCategory, PostImage, AccountSetting, Subscriber
 from werkzeug.utils import secure_filename
 from datetime import datetime
 import os
 import shutil
+
+
+def send_reset_email(admin):
+    token = admin.get_reset_token(180)
+    try:
+        msg = Message(
+            subject='SacheFacts | Password Reset Request', 
+            sender=('SacheFacts', app.config['MAIL_USERNAME']),
+            recipients=[admin.email])
+        msg.body = f'''To reset your password, visit the following link: 
+    { url_for('admins.passwordreset', token=token, _external=True) }
+    If you did not make this requestthe simply ignore this email and no change will be made
+    '''
+        mail.send(msg)
+        flash('Password reset link is sent to registered Email id', 'success')
+    except Exception as e:
+        print(e)
+        flash('Error Occur', 'danger')
+    return
+
 
 
 def fileupload(file, folder, thumbnail=False):
@@ -56,18 +77,17 @@ def login():
     nexturl = request.args.get('next')
     if current_user.is_authenticated:
         return redirect(url_for('admins.home'))
-    else:
-        title = 'Sache Fact | Login'
-        form = LoginForm()
-        if request.method == 'POST' and form.validate_on_submit():
-            admin = Admin.query.filter_by(username=request.form.get('username')).first()
-            if admin and bcrypt.check_password_hash(admin.password, request.form.get('password')):
-                login_user(admin)
-                flash('Login successfull', 'success')
-                return redirect(nexturl or url_for('admins.home'))
-            else:
-                flash('Wrong Login Credentials', 'danger')
-        return render_template('admin/login.html', title=title, form=form)
+    title = 'Sache Fact | Login'
+    form = LoginForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        admin = Admin.query.filter_by(username=request.form.get('username')).first()
+        if admin and bcrypt.check_password_hash(admin.password, request.form.get('password')):
+            login_user(admin)
+            flash('Login successfull', 'success')
+            return redirect(nexturl or url_for('admins.home'))
+        else:
+            flash('Wrong Login Credentials', 'danger')
+    return render_template('admin/login.html', title=title, form=form)
 
 
 #Logout Routes
@@ -358,6 +378,43 @@ def editpost(slag):
     return render_template('admin/blog/edit.html', title=title, form=form, slag=post.slag, thumbnail=post.thumbnail)
 
 
+#Post View Page Routes
+@admin.route('/wp-admin/sendmail', methods=['POST'])
+@login_required
+def sendmail():
+    site = AccountSetting.query.get(1)
+    if site is None:
+        flash('Accounts Details Not Availble', 'danger')
+        return redirect(request.referrer)
+    if request.form.get('sendid') and request.form.get('sendbody'):
+        sendbody = request.form.get('sendbody')
+        post = Post.query.get_or_404(request.form.get('sendid'))
+        subscribers = Subscriber.query.all()
+        if len(subscribers) > 0:
+            recipents = []
+            for subscriber in subscribers:
+                recipents.append(subscriber.email)
+            try:
+                msg = Message(
+                    subject=f'SacheFacts | { post.title }', 
+                    sender=('SacheFacts', app.config['MAIL_USERNAME']),
+                    recipients=recipents)
+                msg.body = render_template('mails/blog.html', post=post, site=site, sendbody=sendbody)
+                msg.html = render_template('mails/blog.html', post=post, site=site, sendbody=sendbody)
+                mail.send(msg)
+                flash('Successfully mail send to all subscribers', 'success')
+            except Exception as e:
+                print(e)
+                flash('Error in sending mail', 'danger')
+            post.mail = True
+            db.session.commit()
+        else:
+            flash('No subscriber is available to send mail', 'warning')
+    else:
+        abort(403)
+    return redirect(url_for('admins.viewpost'))
+
+
 #Images View Page Routes
 @admin.route('/wp-admin/media')
 @login_required
@@ -395,48 +452,67 @@ def deletemedia():
 @login_required
 def account():
     title = 'Sache Fact | Account'
-    account = AccountSetting.query.get_or_404(1)
+    account = AccountSetting.query.get(1)
     profile = Admin.query.filter_by(id=1, role='admin').first_or_404()
-    form = AccountForm(obj=account)
+    if account:
+        form = AccountForm(obj=account)
+        sl=account.site_logo
+        sp=account.site_poster
+        ap=account.admin_photo
+    else:
+        form = AccountForm()
+        sl=None
+        sp=None
+        ap=None
     form2 = ProfileLoginForm(obj=profile)
     if request.method == 'POST' and form.validate_on_submit():
         try:
-            account.site_title = request.form.get('site_title')
-            account.site_youtube = request.form.get('site_youtube')
-            account.site_facebook = request.form.get('site_facebook')
-            account.site_instagram = request.form.get('site_instagram')
-            account.admin_firstname = request.form.get('admin_firstname')
-            account.admin_lastname = request.form.get('admin_lastname')
-            account.admin_displayname = request.form.get('admin_displayname')
-            account.admin_contact = request.form.get('admin_contact')
-            account.admin_email = request.form.get('admin_email')
-            account.admin_address = request.form.get('admin_address')
-            if request.files.get('site_logo'):
-                oldpic = account.site_logo
-                newpic = siteupload(request.files.get('site_logo'))
-                account.site_logo = newpic
-                if newpic != oldpic:
-                    filedelete(oldpic)
-            if request.files.get('site_poster'):
-                oldpic = account.site_poster
-                newpic = siteupload(request.files.get('site_poster'))
-                account.site_poster = newpic
-                if newpic != oldpic:
-                    filedelete(oldpic)
-            if request.files.get('admin_photo'):
-                oldpic = account.admin_photo
-                newpic = siteupload(request.files.get('admin_photo'))
-                print(newpic)
-                account.admin_photo = newpic
-                if newpic != oldpic:
-                    filedelete(oldpic)
-            db.session.commit()
+            if account:
+                account.site_title = request.form.get('site_title')
+                account.site_youtube = request.form.get('site_youtube')
+                account.site_facebook = request.form.get('site_facebook')
+                account.site_instagram = request.form.get('site_instagram')
+                account.admin_firstname = request.form.get('admin_firstname')
+                account.admin_lastname = request.form.get('admin_lastname')
+                account.admin_displayname = request.form.get('admin_displayname')
+                account.admin_contact = request.form.get('admin_contact')
+                account.admin_email = request.form.get('admin_email')
+                account.admin_address = request.form.get('admin_address')
+                if request.files.get('site_logo'):
+                    oldpic = account.site_logo
+                    newpic = siteupload(request.files.get('site_logo'))
+                    account.site_logo = newpic
+                    if newpic != oldpic:
+                        filedelete(oldpic)
+                if request.files.get('site_poster'):
+                    oldpic = account.site_poster
+                    newpic = siteupload(request.files.get('site_poster'))
+                    account.site_poster = newpic
+                    if newpic != oldpic:
+                        filedelete(oldpic)
+                if request.files.get('admin_photo'):
+                    oldpic = account.admin_photo
+                    newpic = siteupload(request.files.get('admin_photo'))
+                    account.admin_photo = newpic
+                    if newpic != oldpic:
+                        filedelete(oldpic)
+                db.session.commit()
+            else:
+                if request.files.get('site_logo'):
+                    site_logo = siteupload(request.files.get('site_logo'))
+                if request.files.get('site_poster'):
+                    site_poster = siteupload(request.files.get('site_poster'))
+                if request.files.get('admin_photo'):
+                    admin_photo = siteupload(request.files.get('admin_photo'))
+                act = AccountSetting(site_title = request.form.get('site_title'), site_youtube = request.form.get('site_youtube'), site_facebook = request.form.get('site_facebook'), site_instagram = request.form.get('site_instagram'), admin_firstname = request.form.get('admin_firstname'), admin_lastname = request.form.get('admin_lastname'), admin_displayname = request.form.get('admin_displayname'), admin_contact = request.form.get('admin_contact'), admin_email = request.form.get('admin_email'), admin_address = request.form.get('admin_address'), site_logo = site_logo, site_poster = site_poster, admin_photo = admin_photo)
+                db.session.add(act)
+                db.session.commit()
         except Exception as e:
             print(e)
             db.session.rollback()
         return redirect(url_for('admins.account'))
     form2.key.data = profile.email
-    return render_template('admin/account.html', title=title, form=form, sl=account.site_logo, sp=account.site_poster, ap=account.admin_photo, form2=form2, key=bcrypt.generate_password_hash(profile.email).decode('utf-8'))
+    return render_template('admin/account.html', title=title, form=form, sl=sl, sp=sp, ap=ap, form2=form2, key=bcrypt.generate_password_hash(profile.email).decode('utf-8'))
 
 
 #Password Forget route
@@ -453,7 +529,7 @@ def loginupdate():
                 if request.form.get('email'):
                     profile.email = request.form.get('email')
                 if request.form.get('password'):
-                    profile.password = request.form.get('password')
+                    profile.password = bcrypt.generate_password_hash(request.form.get('password')).decode('utf-8')
                 db.session.commit()
                 return redirect(url_for('admins.logout'))
             except Exception as e:
@@ -465,32 +541,31 @@ def loginupdate():
 #Password Forget route
 @admin.route('/wp-password-forget', methods=['GET', 'POST'])
 def passwordforget():
+    if current_user.is_authenticated:
+        return redirect(url_for('admins.home'))
     title = 'Sache Facts - Password Forget'
     form = PasswordForgetForm()
     if request.method == 'POST' and form.validate_on_submit():
-        profile = Admin.query.filter_by(email=request.form.get('email')).first();
-        if profile:
-            link = f"{ url_for('admins.passwordreset', id=profile.role, hid=bcrypt.generate_password_hash(profile.role).decode('utf-8'), email=profile.email, hemail=bcrypt.generate_password_hash(profile.email).decode('utf-8')) }"
-            print(link)
-            flash('Password reset link is sent to registered Email id', 'success')
-        else:
-            flash('Wrong Email..!!', 'danger')
+        admin = Admin.query.filter_by(email=form.email.data).first_or_404()
+        send_reset_email(admin)
         return redirect(url_for('admins.login'))
     return render_template('admin/password/forget.html', title=title, form=form)
 
 
 #Password Recovery route
-@admin.route('/wp-password-reset', methods=['GET', 'POST'])
-def passwordreset():
+@admin.route('/wp-password-reset/<token>', methods=['GET', 'POST'])
+def passwordreset(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('admins.home'))
     title = 'Sache Facts - Password Reset'
-    if request.args.get('hid') and request.args.get('id') and request.args.get('hemail') and request.args.get('email'):
-        if bcrypt.check_password_hash(request.args.get('hid'), request.args.get('id')) and bcrypt.check_password_hash(request.args.get('hemail'), request.args.get('email')):
-            profile = Admin.query.filter_by(role=request.args.get('id'), email=request.args.get('email')).first_or_404()
-            form = PasswordResetForm()
-            if request.method == 'POST' and form.validate_on_submit():
-                profile.password = request.form.get('password')
-                db.session.commit()
-                flash('Password successfully reset', 'success')
-                return redirect(url_for('admins.login'))
-            return render_template('admin/password/reset.html', title=title, form=form)
-    return redirect(url_for('admins.login'))
+    admin = Admin.verify_reset_token(token)
+    if admin is None:
+        flash('This is an invalid or expired token', 'danger')
+        return redirect(url_for('admins.login'))
+    form = PasswordResetForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        admin.password = bcrypt.generate_password_hash(request.form.get('password')).decode('utf-8')
+        db.session.commit()
+        flash('Password successfully reset', 'success')
+        return redirect(url_for('admins.login'))
+    return render_template('admin/password/reset.html', title=title, form=form)

@@ -74,7 +74,7 @@ def blogs():
 #Single Blog Page Route
 @user.route('/blog/<slag>')
 def singleblog(slag):
-    title = f'SacheFacts | blog | { slag }'
+    title = f'SacheFacts | { slag }'
     site = AccountSetting.query.get(1)
     if site is None:
         abort(500)

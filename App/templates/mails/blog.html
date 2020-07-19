@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div style="background-color: #603B1E; text-align: center; padding: 10px auto;">
+        <div style="margin-bottom: 10px;">
+            <img src="{{ url_for('static', filename='post/'+post.thumbnail, _external=True) }}" alt="No Thumbnail" width="300px" style="border: 2px solid #ccd9ed; border-radius: 5px;">
+            <h2 style="font-style: italic; color: #ffffff;">{{ post.title }}</h2>
+        </div>
+        <hr style="color: #77a8f2;">
+        <div style="margin-bottom: 10px;">
+            <p style="color: #ffffff;">{{ sendbody }}</p>
+            <hr style="color: #77a8f2;">
+            <div style="margin: 5px auto ;">
+                <p style="color: #0e66eb;"><strong><u>Blog related Links</u></strong></p>
+                <p>
+                    <a href="{{ url_for('users.singleblog', slag=post.slag, _external=True) }}" target="_blank" title="Website" style="text-decoration: none; color: #eb200e; margin: auto 5px;">Website</a>
+                    {% if post.youtube %}
+                    <a href="{{ post.youtube }}" target="_blank" title="Youtube" style="text-decoration: none; color: #eb200e; margin: auto 5px;">Youtube</a>
+                    {% endif %}
+                    {% if post.facebook %}
+                    <a href="{{ post.facebook }}" target="_blank" title="Facebook" style="text-decoration: none; color: #eb200e; margin: auto 5px;">Facebook</a>
+                    {% endif %}
+                    {% if post.instagram %}
+                    <a href="{{ post.instagram }}" target="_blank" title="Instagram" style="text-decoration: none; color: #eb200e; margin: auto 5px;">Instagram</a>
+                    {% endif %}
+                    {% if post.link1 %}
+                    <a href="{{ post.link1 }}" target="_blank" title="Website" style="text-decoration: none; color: #eb200e; margin: auto 5px;">Website</a>
+                    {% endif %}
+                    {% if post.link2 %}
+                    <a href="{{ post.link2 }}" target="_blank" title="Website" style="text-decoration: none; color: #eb200e; margin: auto 5px;">Website</a>
+                    {% endif %}
+                </p>
+            </div>
+            <hr style="color: #77a8f2;">
+            <div style="margin: 10px auto;">
+                <p style="color: #0e66eb;"><strong><u>External Links</u></strong></p>
+                <p>
+                    <a href="{{ url_for('users.home', _external=True) }}" target="_blank" title="Website" style="text-decoration: none; color: #eb200e; margin: auto 5px;">Website</a>
+                    <a href="{{ site.site_youtube }}" target="_blank" title="Youtube" style="text-decoration: none; color: #eb200e; margin: auto 5px;">Youtube</a>
+                    <a href="{{ site.site_facebook }}" target="_blank" title="Facebook" style="text-decoration: none; color: #eb200e; margin: auto 5px;">Facebook</a>
+                    <a href="{{ site.site_instagram }}" target="_blank" title="Instagram" style="text-decoration: none; color: #eb200e; margin: auto 5px;"><i class="fab fa-instagram fa-2x text-warning"></i></a>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

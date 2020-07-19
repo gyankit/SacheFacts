@@ -1,6 +1,7 @@
-from App import db, login_manager
+from App import db, login_manager, app
 from datetime import datetime
 from flask_login import UserMixin
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 
 @login_manager.user_loader
@@ -16,6 +17,19 @@ class Admin(db.Model, UserMixin):
     password = db.Column(db.String(256), nullable=False)
     role = db.Column(db.String(50), unique=True, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
+
+    def get_reset_token(self, expires_sec=1800):
+        s = Serializer(app.config['SECRET_KEY'], expires_sec)
+        return s.dumps({'admin_id': self.id}).decode('utf-8')
+
+    @staticmethod
+    def verify_reset_token(token):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            admin_id = s.loads(token)['admin_id']
+        except:
+            return None
+        return Admin.query.get(admin_id)
 
     def __repr__(self):
         return f'username : { self.username }, email : { self.email }'
@@ -56,6 +70,7 @@ class Post(db.Model):
     video = db.Column(db.String(500))
     status = db.Column(db.Boolean, nullable=False, default=True)
     featured = db.Column(db.Boolean, nullable=False, default=False)
+    mail = db.Column(db.Boolean, nullable=False, default=False)
     created_at = db.Column(db.DateTime, nullable=False)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     tags = db.relationship('PostTag', backref='post', lazy=True)

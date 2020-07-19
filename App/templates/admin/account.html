@@ -45,9 +45,9 @@
             </div>
             {% endif %}
             {{ form_file_field_inline(form.site_poster) }}
-            {{ form_file_field_inline(form.site_youtube) }}
-            {{ form_file_field_inline(form.site_facebook) }}
-            {{ form_file_field_inline(form.site_instagram) }}
+            {{ form_input_field_inline(form.site_youtube) }}
+            {{ form_input_field_inline(form.site_facebook) }}
+            {{ form_input_field_inline(form.site_instagram) }}
             {{ form_input_field_inline(form.admin_firstname) }}
             {{ form_input_field_inline(form.admin_lastname) }}
             {{ form_input_field_inline(form.admin_displayname) }}
@@ -64,7 +64,7 @@
             {{ form_file_field_inline(form.admin_photo) }}
             <div class="d-flex justify-content-center">
                 {{ form.update(class="btn px-5 btn-flat btn-primary text-light mb-3") }}
-            </button>
+            </div>
         </form>
     </div>
 </div>
@@ -96,3 +96,10 @@
     </div>
 </div>
 {% endblock body %}
+{% block js %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='plugins/bs-custom-file-input/bs-custom-file-input.min.js') }}"></script>
+    <script>
+        bsCustomFileInput.init();
+    </script>
+{% endblock js %}{{ super() }}
